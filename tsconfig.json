@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["ES2020", "DOM"],
+    "module": "es2020",
+    "moduleResolution": "node",
+    "strict": true,
+    "allowJs": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment"
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,53 @@
+@import "../lib/colors.scss";
+
+.box {
+  display: flex;
+  width: 5rem;
+  height: 5rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  user-select: none;
+
+  & + .box {
+    margin-left: 0.4rem;
+  }
+
+  &.secret {
+    border: 2px solid $c-border;
+    .char {
+      display: none;
+    }
+  }
+  &.correct {
+    background-color: $c-correct;
+  }
+  &.present {
+    background-color: $c-present;
+  }
+  &.absent {
+    background-color: $c-absent;
+  }
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  .row {
+    display: flex;
+    flex-direction: row;
+    & + .row {
+      margin-top: 0.4rem;
+    }
+  }
+}
+
+.input {
+  width: 100%;
+  margin: 2rem 0;
+  background-color: $c-bg;
+  color: $c-text;
+  font-size: 1.2em;
+  font-weight: bold;
+}

@@ -11,7 +11,10 @@
     "resolveJsonModule": true,
     "jsx": "preserve",
     "jsxFactory": "h",
-    "jsxFragmentFactory": "Fragment"
+    "jsxFragmentFactory": "Fragment",
+    "paths": {
+      "@lib/*": ["./src/lib/*"]
+    }
   },
   "include": ["src"]
 }

@@ -20,7 +20,7 @@ interface Kosen {
 
 const KosenList: Kosen[] = KosenListJson.map(({ name, match, word }) => ({
   name: `${name}高専`,
-  matches: str => new RegExp(match).test(str),
+  matches: str => new RegExp(`^(${match})(|高専)$`).test(str.trim()),
   word,
 }))
 
@@ -44,10 +44,10 @@ function BoxElem({ char, state }: Box) {
 // Game
 
 interface GameStore {
-  status: "playing" | "win" | "lose"
+  status: "playing" | "notInList" | "win" | "lose"
   ans: string
   rows: (string | null)[]
-  rown: number
+  rowN: number
   input: string
 }
 
@@ -61,7 +61,7 @@ function GetInitialGameState(): GameStore {
     status: "playing",
     ans: KosenList[TodayDateHash() % KosenList.length].word,
     rows: [...Array(GameTabRow)].fill(null),
-    rown: 0,
+    rowN: 0,
     input: "",
   }
 }
@@ -70,21 +70,37 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
   switch (action.type) {
     case "reset":
       return GetInitialGameState()
+
     case "input":
-      return { ...state, input: action.payload! }
-    case "submit": {
-      const rows = state.rows
-      rows[state.rown] = state.input
-      // 勝敗判定
-      let status = state.status
       return {
         ...state,
-        status,
-        rows,
-        rown: state.rown + 1,
-        input: "",
+        status: state.status === "notInList" ? "playing" : state.status,
+        input: action.payload!,
+      }
+
+    case "submit": {
+      const matched = KosenList.find(k => k.matches(state.input))
+      if (matched !== undefined) {
+        const rows = state.rows
+        rows[state.rowN] = matched.word
+        let status = state.status
+        if (rows[state.rowN] === state.ans) status = "win"
+        else if (state.rowN >= GameTabRow - 1) status = "lose"
+        return {
+          ...state,
+          status,
+          rows,
+          rowN: state.rowN + 1,
+          input: "",
+        }
+      } else {
+        return {
+          ...state,
+          status: "notInList",
+        }
       }
     }
+
     default:
       return state
   }
@@ -98,21 +114,26 @@ function Game() {
       <div class='tab'>
         {state.rows.map(row => (
           <div class='row'>
-            {row !== null
-              ? row
-                  .split("")
-                  .map(char => <BoxElem char={char} state={"correct"} />) ///
-              : [...Array(GameTabCol)].fill(<BoxElem state={"secret"} />)}
+            {row === null
+              ? [...Array(GameTabCol)].fill(<BoxElem state={"secret"} />)
+              : row.split("").map((char, i) => {
+                  // Animation
+                  if (state.ans[i] == char)
+                    return <BoxElem char={char} state={"correct"} />
+                  if (state.ans.includes(char))
+                    return <BoxElem char={char} state={"present"} />
+                  return <BoxElem char={char} state={"absent"} />
+                })}
           </div>
         ))}
       </div>
       <form
         onSubmit={(e: any) => {
           e.preventDefault()
-          dispatch({ type: "submit" })
+          if (state.input !== "") dispatch({ type: "submit" })
         }}>
         <input
-          class='input'
+          class={`input ${state.status === "notInList" ? "notInList" : ""}`}
           placeholder='hoge高専'
           value={state.input}
           onChange={(e: any) => {

@@ -45,4 +45,8 @@
   color: $c-text;
   font-size: 1.2em;
   font-weight: bold;
+
+  &.notInList {
+    background-color: red;
+  }
 }

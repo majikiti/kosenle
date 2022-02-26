@@ -15,14 +15,30 @@ const GameTabCol = 5
 interface Kosen {
   name: string
   matches: (str: string) => boolean
-  word: string
+  word: KosenWord
 }
 
-const KosenList: Kosen[] = KosenListJson.map(({ name, match, word }) => ({
-  name: `${name}高専`,
-  matches: str => new RegExp(`^(${match})(|高専)$`).test(str.trim()),
-  word,
-}))
+class KosenWord {
+  readonly str: string
+  readonly pos: number
+  constructor(init: { str: string; pos: number }) {
+    this.str = init.str
+    this.pos = init.pos
+  }
+  equals(b: KosenWord): boolean {
+    return this.str === b.str && this.pos === b.pos
+  }
+}
+
+const KosenList: Kosen[] = KosenListJson.map(
+  ({ name, match, word, pos = 0 }) => {
+    return {
+      name: `${name}高専`,
+      matches: str => new RegExp(`^(${match})(|高専)$`).test(str.trim()),
+      word: new KosenWord({ str: word, pos }),
+    }
+  }
+)
 
 // Box
 
@@ -31,7 +47,7 @@ interface Box {
   state: BoxState
 }
 
-type BoxState = "secret" | "correct" | "present" | "absent"
+type BoxState = "secret" | "correct" | "present" | "absent" | "blank"
 
 function BoxElem({ char, state }: Box) {
   return (
@@ -45,9 +61,9 @@ function BoxElem({ char, state }: Box) {
 
 interface GameStore {
   status: "playing" | "notInList" | "win" | "lose"
-  ans: string
-  rows: (string | null)[]
-  rowN: number
+  ans: KosenWord
+  rows: (null | KosenWord)[]
+  cur: number
   input: string
 }
 
@@ -57,11 +73,12 @@ interface GameAction {
 }
 
 function GetInitialGameState(): GameStore {
+  const kosen = KosenList[TodayDateHash() % KosenList.length]
   return {
     status: "playing",
-    ans: KosenList[TodayDateHash() % KosenList.length].word,
+    ans: kosen.word,
     rows: [...Array(GameTabRow)].fill(null),
-    rowN: 0,
+    cur: 0,
     input: "",
   }
 }
@@ -80,23 +97,24 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
 
     case "submit": {
       const matched = KosenList.find(k => k.matches(state.input))
-      if (matched !== undefined) {
-        const rows = state.rows
-        rows[state.rowN] = matched.word
-        let status = state.status
-        if (rows[state.rowN] === state.ans) status = "win"
-        else if (state.rowN >= GameTabRow - 1) status = "lose"
-        return {
-          ...state,
-          status,
-          rows,
-          rowN: state.rowN + 1,
-          input: "",
-        }
-      } else {
+      if (matched === undefined) {
         return {
           ...state,
           status: "notInList",
+        }
+      } else {
+        const _rows = state.rows.slice()
+        _rows[state.cur] = matched.word
+        return {
+          ...state,
+          status: matched.word.equals(state.ans)
+            ? "win"
+            : state.cur >= GameTabRow - 1
+            ? "lose"
+            : state.status,
+          rows: _rows,
+          cur: state.cur + 1,
+          input: "",
         }
       }
     }
@@ -108,7 +126,6 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
 
 function Game() {
   const [state, dispatch] = useReducer(GameReducer, GetInitialGameState())
-
   return (
     <>
       <div class='tab'>
@@ -116,14 +133,21 @@ function Game() {
           <div class='row'>
             {row === null
               ? [...Array(GameTabCol)].fill(<BoxElem state={"secret"} />)
-              : row.split("").map((char, i) => {
+              : row.str.split("").map((char, i) => {
                   // Animation
-                  if (state.ans[i] == char)
-                    return <BoxElem char={char} state={"correct"} />
-                  if (state.ans.includes(char))
+                  const ans = state.ans
+                  const posDiffNg = ans.pos - row.pos
+                  if (posDiffNg <= i && i < ans.str.length + posDiffNg)
+                    if (ans.str[i - posDiffNg] === char)
+                      return <BoxElem char={char} state={"correct"} />
+                  if (ans.str.includes(char))
                     return <BoxElem char={char} state={"present"} />
                   return <BoxElem char={char} state={"absent"} />
                 })}
+            {row === null || row.str.length % 2 ? null :
+              state.status === "win" && state.ans.equals(row)
+                ? (<BoxElem state={"correct"} />)
+                : (<BoxElem state={"blank"} />)}
           </div>
         ))}
       </div>

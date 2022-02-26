@@ -26,6 +26,9 @@
   &.absent {
     background-color: $c-absent;
   }
+  &.blank {
+    background-color: $c-blank;
+  }
 }
 
 .tab {

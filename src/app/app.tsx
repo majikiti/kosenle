@@ -96,6 +96,7 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
       }
 
     case "submit": {
+      if (state.status === "win" || state.status === "lose") return state
       const matched = KosenList.find(k => k.matches(state.input))
       if (matched === undefined) {
         return {
@@ -128,6 +129,16 @@ function Game() {
   const [state, dispatch] = useReducer(GameReducer, GetInitialGameState())
   return (
     <>
+      {state.status === "win" && (
+        <>
+          <span>WIN!!</span>
+        </>
+      )}
+      {state.status === "lose" && (
+        <>
+          <span>GAME OVER</span>
+        </>
+      )}
       <div class='tab'>
         {state.rows.map(row => (
           <div class='row'>

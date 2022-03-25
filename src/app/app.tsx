@@ -100,28 +100,36 @@ interface GameAction {
 
 function GetInitialGameState(): GameStore {
   const _date = new Date()
-  const newState = {
-    status: "playing",
-    result: null,
-    ans: KosenList[RndFromDate(_date) % KosenList.length].word,
-    rows: [...Array(GameTabRow)].fill(null),
-    cur: 0,
-    input: "",
-    date: dateNum(_date),
-  }
+  const kosen = KosenList[RndFromDate(_date) % KosenList.length]
   try {
     const oldState = loadObject("gameState")
     if (dateNum(_date) !== oldState.date)
-      return newState
+      return {
+        status: "playing",
+        result: null,
+        ans: kosen.word,
+        rows: [...Array(GameTabRow)].fill(null),
+        cur: 0,
+        input: "",
+        date: dateNum(_date),
+      }
     // 復元する
     return {
       ...oldState,
       ans: new KosenWord(oldState.ans),
-      rows: oldState.rows.map((row: null | KosenWord[]) =>
+      rows: oldState.rows.map((row: null | KosenWord) =>
         row === null ? null : new KosenWord(row))
     }
   } catch {
-    return newState
+    return {
+      status: "playing",
+      result: null,
+      ans: kosen.word,
+      rows: [...Array(GameTabRow)].fill(null),
+      cur: 0,
+      input: "",
+      date: dateNum(_date),
+    }
   }
 }
 
@@ -148,9 +156,10 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
       } else {
         const _rows = state.rows.slice()
         _rows[state.cur] = matched.word
-        const _status = (matched.word.equals(state.ans) || state.cur >= GameTabRow - 1)
-          ? "end"
-          : state.status
+        const _status: "playing" | "notInList" | "end"
+          = (matched.word.equals(state.ans) || state.cur >= GameTabRow - 1)
+            ? "end"
+            : state.status
         const _result = _status !== "end"
           ? state.result
           : matched.word.equals(state.ans)
@@ -281,7 +290,7 @@ function GameResult({ state }: { state: GameStore }) {
                 <p>😭</p>
               </>
             )}
-            <pre>{tabStr.replaceAll("　", "")}</pre>
+            <pre>{tabStr.split("　").join("")}</pre>
             {/*<button
               onClick={() => {
               }}

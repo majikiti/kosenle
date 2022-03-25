@@ -53,3 +53,37 @@
     background-color: red;
   }
 }
+
+.overlay {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+  background-color: $c-shadow;
+}
+
+.result {
+  display: flex;
+  position: relative;
+  min-width: 36rem;
+  min-height: 24rem;
+  padding: 1rem;
+  flex-direction: column;
+  background-color: $c-bg;
+  border: solid $c-border;
+
+  h2, button {
+    text-transform: uppercase;
+  }
+
+  .close {
+    position: absolute;
+    width: 4rem;
+    height: 4rem;
+    right: 1rem;
+  }
+}

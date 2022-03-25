@@ -1,5 +1,5 @@
 import { FunctionComponent } from "preact"
-import { useReducer } from "preact/hooks"
+import { useReducer, useState } from "preact/hooks"
 import { RndToday } from "@lib/rnd"
 import KosenListJson from "@lib/kosen.json"
 import Layout from "@lib/layout"
@@ -60,7 +60,8 @@ function BoxElem({ char, state }: Box) {
 // Game
 
 interface GameStore {
-  status: "playing" | "notInList" | "win" | "lose"
+  status: "playing" | "notInList" | "end"
+  result: null | "win" | "lose"
   ans: KosenWord
   rows: (null | KosenWord)[]
   cur: number
@@ -76,6 +77,7 @@ function GetInitialGameState(): GameStore {
   const kosen = KosenList[RndToday() % KosenList.length]
   return {
     status: "playing",
+    result: null,
     ans: kosen.word,
     rows: [...Array(GameTabRow)].fill(null),
     cur: 0,
@@ -96,7 +98,7 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
       }
 
     case "submit": {
-      if (state.status === "win" || state.status === "lose") return state
+      if (state.status === "end") return state
       const matched = KosenList.find(k => k.matches(state.input))
       if (matched === undefined) {
         return {
@@ -106,13 +108,20 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
       } else {
         const _rows = state.rows.slice()
         _rows[state.cur] = matched.word
+        const _status = (matched.word.equals(state.ans) || state.cur >= GameTabRow - 1)
+          ? "end"
+          : state.status
+        const _result = _status !== "end"
+          ? state.result
+          : matched.word.equals(state.ans)
+          ? "win"
+          : state.cur >= GameTabRow - 1
+          ? "lose"
+          : state.result
         return {
           ...state,
-          status: matched.word.equals(state.ans)
-            ? "win"
-            : state.cur >= GameTabRow - 1
-            ? "lose"
-            : state.status,
+          status: _status,
+          result: _result,
           rows: _rows,
           cur: state.cur + 1,
           input: "",
@@ -129,16 +138,6 @@ function Game() {
   const [state, dispatch] = useReducer(GameReducer, GetInitialGameState())
   return (
     <>
-      {state.status === "win" && (
-        <>
-          <span>WIN!!</span>
-        </>
-      )}
-      {state.status === "lose" && (
-        <>
-          <span>GAME OVER</span>
-        </>
-      )}
       <div class='tab'>
         {state.rows.map(row => (
           <div class='row'>
@@ -156,7 +155,7 @@ function Game() {
                   return <BoxElem char={char} state={"absent"} />
                 })}
             {row === null || row.str.length % 2 ? null :
-              state.status === "win" && state.ans.equals(row)
+              state.result === "win" && state.ans.equals(row)
                 ? (<BoxElem state={"correct"} />)
                 : (<BoxElem state={"blank"} />)}
           </div>
@@ -169,6 +168,7 @@ function Game() {
         }}>
         <input
           class={`input ${state.status === "notInList" ? "notInList" : ""}`}
+          disabled={state.status === "end"}
           placeholder='hoge高専'
           value={state.input}
           onChange={(e: any) => {
@@ -176,6 +176,83 @@ function Game() {
           }}
         />
       </form>
+      {state.status === "end" && (
+        <GameResult state={state} />
+      )}
+    </>
+  )
+}
+
+function GameResult({ state }: { state: GameStore }) {
+  const [showResult, setShowResult] = useState(true)
+  let tabStr = ""
+  let tabRows = 0
+  state.rows.forEach(row => {
+    if (row !== null) {
+      let rowStr = row.str.split("").map((char, i) => {
+        const ans = state.ans
+        const posDiffNg = ans.pos - row.pos
+        if (posDiffNg <= i && i < ans.str.length + posDiffNg)
+          if (ans.str[i - posDiffNg] === char)
+            return "🟩"
+        if (ans.str.includes(char))
+          return "🟨"
+        return "⬛"
+      }).join("")
+      if (!(row.str.length % 2)) {
+        if (row.str === state.ans.str) rowStr += "🟩"
+        else rowStr += "⬛"
+      } else if (row.str.length < GameTabCol) {
+        let pref = ""
+        for (let i=0; i<(GameTabCol-row.str.length)/2; ++i)
+          pref += "　"
+        rowStr = pref + rowStr
+      }
+      tabStr += `${rowStr}\n`
+      ++tabRows
+    }
+  })
+  const resText = `Kosenle ${
+    state.result === "lose"
+      ? "X"
+      : `${tabRows}`
+  }/${GameTabRow}\n\n${tabStr}`
+  return (
+    <>
+      {showResult && (
+        <div class='overlay'>
+          <div class='result'>
+            <button
+              class='close'
+              onClick={() => {
+                setShowResult(false)
+              }}
+            >x</button>
+            {state.result === "win" && (
+              <>
+                <h2>Win!!</h2>
+              </>
+            )}
+            {state.result === "lose" && (
+              <>
+                <h2>Game Over</h2>
+                <p>😭</p>
+              </>
+            )}
+            <pre>{tabStr.replaceAll("　", "")}</pre>
+            {/*<button
+              onClick={() => {
+              }}
+            >Copy</button>*/}
+            <a
+              href={`https://twitter.com/intent/tweet?text=${
+                encodeURIComponent(resText)
+              }`}
+              target="_blank"
+            >Tweet</a>
+          </div>
+        </div>
+      )}
     </>
   )
 }

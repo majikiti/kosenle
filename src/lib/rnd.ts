@@ -8,7 +8,7 @@ export function xor32(seed: number): number {
 
 export function RndByDate(date: Date): number {
   const dateNum = parseInt(`${
-    date.getYear()
+    date.getFullYear()
   }${
     date.getMonth()
   }${

@@ -6,7 +6,7 @@ export function xor32(seed: number): number {
   return Math.abs(y)
 }
 
-export function RndByDate(date: Date): number {
+export function RndFromDate(date: Date): number {
   const dateNum = parseInt(`${
     date.getFullYear()
   }${
@@ -15,8 +15,4 @@ export function RndByDate(date: Date): number {
     date.getDate()
   }`)
   return xor32(dateNum)
-}
-
-export function RndToday(): number {
-  return RndByDate(new Date())
 }

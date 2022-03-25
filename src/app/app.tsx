@@ -1,6 +1,6 @@
 import { FunctionComponent } from "preact"
 import { useReducer, useState } from "preact/hooks"
-import { RndToday } from "@lib/rnd"
+import { RndFromDate } from "@lib/rnd"
 import KosenListJson from "@lib/kosen.json"
 import Layout from "@lib/layout"
 import "./app.scss"
@@ -9,6 +9,30 @@ import "./app.scss"
 
 const GameTabRow = 6
 const GameTabCol = 5
+
+// Date
+
+function dateNum(date: Date): number {
+  return parseInt(`${
+    date.getFullYear()
+  }${
+    date.getMonth()
+  }${
+    date.getDate()
+  }`)
+}
+
+// Storage
+
+function saveObject(key: string, obj: any) {
+  localStorage.setItem(key, JSON.stringify(obj))
+}
+
+function loadObject(key: string): any {
+  const data = localStorage.getItem(key)
+  if (data === null) throw new Error("data not found")
+  return JSON.parse(data)
+}
 
 // Kosen
 
@@ -66,6 +90,7 @@ interface GameStore {
   rows: (null | KosenWord)[]
   cur: number
   input: string
+  date: number
 }
 
 interface GameAction {
@@ -74,14 +99,29 @@ interface GameAction {
 }
 
 function GetInitialGameState(): GameStore {
-  const kosen = KosenList[RndToday() % KosenList.length]
-  return {
+  const _date = new Date()
+  const newState = {
     status: "playing",
     result: null,
-    ans: kosen.word,
+    ans: KosenList[RndFromDate(_date) % KosenList.length].word,
     rows: [...Array(GameTabRow)].fill(null),
     cur: 0,
     input: "",
+    date: dateNum(_date),
+  }
+  try {
+    const oldState = loadObject("gameState")
+    if (dateNum(_date) !== oldState.date)
+      return newState
+    // 復元する
+    return {
+      ...oldState,
+      ans: new KosenWord(oldState.ans),
+      rows: oldState.rows.map((row: null | KosenWord[]) =>
+        row === null ? null : new KosenWord(row))
+    }
+  } catch {
+    return newState
   }
 }
 
@@ -118,7 +158,7 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
           : state.cur >= GameTabRow - 1
           ? "lose"
           : state.result
-        return {
+        const _state = {
           ...state,
           status: _status,
           result: _result,
@@ -126,6 +166,8 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
           cur: state.cur + 1,
           input: "",
         }
+        saveObject("gameState", _state)
+        return _state
       }
     }
 

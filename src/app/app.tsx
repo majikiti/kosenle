@@ -1,6 +1,6 @@
 import { FunctionComponent } from "preact"
 import { useReducer } from "preact/hooks"
-import { TodayDateHash } from "@lib/datehash"
+import { RndToday } from "@lib/rnd"
 import KosenListJson from "@lib/kosen.json"
 import Layout from "@lib/layout"
 import "./app.scss"
@@ -73,7 +73,7 @@ interface GameAction {
 }
 
 function GetInitialGameState(): GameStore {
-  const kosen = KosenList[TodayDateHash() % KosenList.length]
+  const kosen = KosenList[RndToday() % KosenList.length]
   return {
     status: "playing",
     ans: kosen.word,

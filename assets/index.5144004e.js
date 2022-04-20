@@ -2,5 +2,4 @@ var v=Object.defineProperty,K=Object.defineProperties;var F=Object.getOwnPropert
 `,++r}});const s=`Kosenle ${t.result==="lose"?"X":`${r}`}/${f}
 
 ${o}
-
 https://majikiti.github.io/kosenle/`;return a(w,{children:e&&a("div",{class:"overlay",children:p("div",{class:"result",children:[a("button",{class:"close",onClick:()=>{n(!1)},children:"x"}),t.result==="win"&&a(w,{children:a("h2",{children:"Win!!"})}),t.result==="lose"&&p(w,{children:[a("h2",{children:"Game Over"}),a("p",{children:"\u{1F62D}"})]}),a("pre",{children:o.split("\u3000").join("")}),a("a",{href:`https://twitter.com/intent/tweet?text=${encodeURIComponent(s)}`,target:"_blank",children:"Tweet"})]})})})}function P(){return a(_,{children:a(H,{})})}G(a(P,{}),document.getElementById("app"));console.log("%c\u3053\u3093\u306B\u3061\u306F!","color: #FF0000; font-size: 8em; font-weight: bold;");

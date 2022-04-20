@@ -267,7 +267,7 @@ function GameResult({ state }: { state: GameStore }) {
     state.result === "lose"
       ? "X"
       : `${tabRows}`
-  }/${GameTabRow}\n\n${tabStr}\n\nhttps://majikiti.github.io/kosenle/`
+  }/${GameTabRow}\n\n${tabStr}\nhttps://majikiti.github.io/kosenle/`
   return (
     <>
       {showResult && (

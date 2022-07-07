@@ -7,6 +7,7 @@ specifiers:
   cssnano: 5.1.12
   postcss: 8.4.14
   preact: 10.9.0
+  preact-router: 4.0.1
   sanitize.css: 13.0.0
   sass: 1.53.0
   typescript: 4.7.4
@@ -15,6 +16,7 @@ specifiers:
 
 dependencies:
   preact: 10.9.0
+  preact-router: 4.0.1_preact@10.9.0
   sanitize.css: 13.0.0
 
 devDependencies:
@@ -1366,6 +1368,14 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: true
+
+  /preact-router/4.0.1_preact@10.9.0:
+    resolution: {integrity: sha512-xPyHVLouc5oKIlKu9iEElplNygJYkOn/vfXfZhcoOFqzfAZHZMmT3FsQb0yyPkdt1rwTLFAxek6/5CFkofocSQ==}
+    peerDependencies:
+      preact: '>=10'
+    dependencies:
+      preact: 10.9.0
+    dev: false
 
   /preact/10.9.0:
     resolution: {integrity: sha512-jO6/OvCRL+OT8gst/+Q2ir7dMybZAX8ioP02Zmzh3BkQMHLyqZSujvxbUriXvHi8qmhcHKC2Gwbog6Kt+YTh+Q==}

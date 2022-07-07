@@ -3,7 +3,7 @@ import { useReducer, useState } from "preact/hooks"
 import { RndFromDate } from "@lib/rnd"
 import KosenListJson from "@lib/kosen.json"
 import Layout from "@lib/layout"
-import "./app.scss"
+import "./game.scss"
 
 // Constants
 
@@ -20,6 +20,11 @@ function dateNum(date: Date): number {
   }${
     date.getDate()
   }`)
+}
+
+function jst(): Date {
+  const offset = new Date().getTimezoneOffset() + 9*60
+  return new Date(Date.now() + offset*60*1000)
 }
 
 // Storage
@@ -99,7 +104,7 @@ interface GameAction {
 }
 
 function GetInitialGameState(): GameStore {
-  const _date = new Date()
+  const _date = jst()
   const kosen = KosenList[RndFromDate(_date) % KosenList.length]
   try {
     const oldState = loadObject("gameState")
@@ -185,10 +190,10 @@ function GameReducer(state: GameStore, action: GameAction): GameStore {
   }
 }
 
-function Game() {
+export default function Game() {
   const [state, dispatch] = useReducer(GameReducer, GetInitialGameState())
   return (
-    <>
+    <Layout>
       <div class='tab'>
         {state.rows.map(row => (
           <div class='row'>
@@ -230,7 +235,7 @@ function Game() {
       {state.status === "end" && (
         <GameResult state={state} />
       )}
-    </>
+    </Layout>
   )
 }
 
@@ -305,15 +310,5 @@ function GameResult({ state }: { state: GameStore }) {
         </div>
       )}
     </>
-  )
-}
-
-// App
-
-export function App() {
-  return (
-    <Layout>
-      <Game />
-    </Layout>
   )
 }

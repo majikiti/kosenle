@@ -1,8 +1,9 @@
 {
   "name": "kosenle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "dependencies": {
     "preact": "10.9.0",
+    "preact-router": "4.0.1",
     "sanitize.css": "13.0.0"
   },
   "devDependencies": {
@@ -21,6 +22,7 @@
     "build": "vite build",
     "check": "tsc",
     "dev": "vite",
+    "dev-host": "vite --host",
     "preview": "vite preview"
   }
 }

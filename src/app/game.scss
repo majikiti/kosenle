@@ -2,12 +2,12 @@
 
 .box {
   display: flex;
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   margin: 0.2rem;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
   user-select: none;
 
@@ -34,6 +34,7 @@
 .tab {
   display: flex;
   flex-direction: column;
+
   .row {
     display: flex;
     justify-content: center;
@@ -76,7 +77,8 @@
   background-color: $c-bg;
   border: solid $c-border;
 
-  h2, button {
+  h2,
+  button {
     text-transform: uppercase;
   }
 

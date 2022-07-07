@@ -197,6 +197,9 @@ export default function Game() {
       <div class='tab'>
         {state.rows.map(row => (
           <div class='row'>
+            {row === null || row.str.length % 2 || row.str.length < GameTabCol
+              ? null
+              : (<BoxElem state={"blank"} />)}
             {row === null
               ? [...Array(GameTabCol)].fill(<BoxElem state={"secret"} />)
               : row.str.split("").map((char, i) => {
@@ -210,10 +213,9 @@ export default function Game() {
                     return <BoxElem char={char} state={"present"} />
                   return <BoxElem char={char} state={"absent"} />
                 })}
-            {row === null || row.str.length % 2 ? null :
-              state.result === "win" && state.ans.equals(row)
-                ? (<BoxElem state={"correct"} />)
-                : (<BoxElem state={"blank"} />)}
+            {row === null || row.str.length % 2 || row.str.length > GameTabCol
+              ? null
+              : (<BoxElem state={"blank"} />)}
           </div>
         ))}
       </div>
@@ -243,6 +245,8 @@ function GameResult({ state }: { state: GameStore }) {
   const [showResult, setShowResult] = useState(true)
   let tabStr = ""
   let tabRows = 0
+  let posMin = 0
+  state.rows.forEach(row => { if (row !== null) posMin = Math.min(posMin, row.pos) })
   state.rows.forEach(row => {
     if (row !== null) {
       let rowStr = row.str.split("").map((char, i) => {
@@ -255,12 +259,9 @@ function GameResult({ state }: { state: GameStore }) {
           return "🟨"
         return "⬛"
       }).join("")
-      if (!(row.str.length % 2)) {
-        if (row.str === state.ans.str) rowStr += "🟩"
-        else rowStr += "⬛"
-      } else if (row.str.length < GameTabCol) {
+      if (posMin < row.pos) {
         let pref = ""
-        for (let i=0; i<(GameTabCol-row.str.length)/2; ++i)
+        for (let i=0; i<(row.pos-posMin)/2; ++i)
           pref += "　"
         rowStr = pref + rowStr
       }

@@ -46,6 +46,7 @@ header .q:active {
 
 main {
   display: flex;
+  width: 100%;
   margin: auto;
   flex-direction: column;
   font-size: 1.5em;
@@ -62,16 +63,16 @@ footer span + span::before {
 
 a {
   color: deepskyblue;
-}
 
-a.white {
-  color: white;
-  text-decoration: none;
-}
+  &.white {
+    color: white;
+    text-decoration: none;
 
-a.white:hover,
-a.white:active {
-  text-decoration: underline;
+    &:hover,
+    &:active {
+      text-decoration: underline;
+    }
+  }
 }
 
 button {

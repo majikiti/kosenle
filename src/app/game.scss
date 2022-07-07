@@ -4,7 +4,7 @@
   display: flex;
   width: 4rem;
   height: 4rem;
-  margin: 0.2rem;
+  margin: .2rem;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
@@ -44,6 +44,7 @@
 
 .input {
   width: 100%;
+  max-width: 22rem;
   margin: 2rem 0;
   background-color: $c-bg;
   color: $c-text;
@@ -70,7 +71,8 @@
 .result {
   display: flex;
   position: relative;
-  min-width: 36rem;
+  width: 100%;
+  max-width: 36rem;
   min-height: 24rem;
   padding: 1rem;
   flex-direction: column;

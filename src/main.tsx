@@ -10,7 +10,8 @@ const App = () => (
   </Router>
 )
 
-render(<App />, document.getElementById("app")!)
+//render(<App />, document.getElementById("app")!)
+render(<Game />, document.getElementById("app")!)
 
 console.log(
   "%cこんにちは!",

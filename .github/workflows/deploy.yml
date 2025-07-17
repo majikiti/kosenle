@@ -7,21 +7,27 @@ on:
   workflow_dispatch:
 
 jobs:
-  gh-pages:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: oven-sh/setup-bun@v2
+      - run: |
+          bun i
+          bun run build
+      - uses: actions/upload-pages-artifact@v3
         with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./dist
+          path: dist
+  deploy:
+    permissions:
+      id-token: write
+      pages: write
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

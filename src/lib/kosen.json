@@ -42,6 +42,7 @@
   { "name": "徳山", "match": "徳山", "word": "NITTC" },
   { "name": "宇部", "match": "宇部", "word": "NITUC" },
   { "name": "大島商船", "match": "大島商船", "word": "NITOC" },
+  { "name": "神山まるごと", "match": "神山まるごと|神山|まるごと", "word": "KAMIYAMAEI", "pos": -3 },
   { "name": "阿南", "match": "阿南", "word": "NITAC" },
   { "name": "香川", "match": "香川", "word": "NITKC" },
   { "name": "新居浜", "match": "新居浜", "word": "NITNC" },

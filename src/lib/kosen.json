@@ -29,7 +29,7 @@
   { "name": "鈴鹿", "match": "鈴鹿", "word": "NITSC" },
   { "name": "近大", "match": "近畿大学|近大", "word": "KUTC" },
   { "name": "舞鶴", "match": "舞鶴", "word": "NITMC" },
-  { "name": "府大", "match": "大阪府立大学|府大", "word": "OPUCT" },
+  { "name": "府大", "match": "大阪公立大学|公大", "word": "OMUCT" },
   { "name": "明石", "match": "明石", "word": "NITAC" },
   { "name": "神戸", "match": "神戸市立|神戸", "word": "KCCT" },
   { "name": "奈良", "match": "奈良", "word": "NITNC" },
@@ -56,5 +56,10 @@
   { "name": "大分", "match": "大分", "word": "NITOC" },
   { "name": "都城", "match": "都城", "word": "NITMC" },
   { "name": "鹿児島", "match": "鹿児島", "word": "NITKC" },
-  { "name": "沖縄", "match": "沖縄", "word": "NITOC" }
+  { "name": "沖縄", "match": "沖縄", "word": "NITOC" },
+  { "name": "モンゴル", "match": "モンゴル", "word": "MKCOT" },
+  { "name": "新モンゴル", "match": "新モンゴル", "word": "NMCT" },
+  { "name": "モンゴル科学技術大学附属", "match": "モンゴル科技大|ШУТИС|MUST-KOSEN|科技大", "word": "MUST" },
+  { "name": "モンクット王工科大学トンブリー校附属", "match": "トンブリー校|มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี", "word": "KMUTT" },
+  { "name": "モンクット王工科大学ラートクラバン校附属", "match": "ラートクラバン校|สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง", "word": "KMITL" }
 ]
